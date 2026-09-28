@@ -76,15 +76,18 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
 
 - `xmlns:syncfusion=...`: Syncfusion kütüphanesini XAML'da kullanabilmek için eklenen tanım.
 - Üst satırda (`StackPanel`) şunlar vardır: kitap adı (`BookInfoText`), durum yazısı (`StatusText`), "Save Bookmark" (yeşil) ve "Close" (kırmızı) butonları.
-- `syncfusion:PdfViewerControl` (`PdfViewer`): PDF'i gösteren hazır kontrol. Kendi araç çubuğu vardır: sayfa değiştirme, yakınlaştırma gibi.
+- `syncfusion:PdfViewerControl` (`PdfViewer`): PDF'i gösteren hazır kontrol. Kendi araç çubuğu vardır: sayfa değiştirme, yakınlaştırma gibi. Dosya araçları (Open, Save, Save As, Print) kodda `ShowFileTools = false` ile gizlenir. Böylece PDF diske kaydedilemez ve başka bir PDF açılamaz.
 - `Loaded`, `Closing` ve `Closed`: Pencere açılırken, kapanmadan hemen önce ve kapandıktan sonra çalışan olaylar.
 
 ## ReaderWindow.xaml.cs
 
 - Alanlar:
   - `book`: Açılan kitap.
+  - `dynamo`: Yer imini kaydetmek için kullanılan `DynamoDbService` nesnesi.
   - `bookStream`: PDF'in bellekteki kopyası. Pencere açık kaldığı sürece silinmemelidir.
   - `documentLoaded`: PDF'in yüklenip yüklenmediğini gösterir.
+  - `firstPageJumpDone`: Kayıtlı sayfaya gitme işleminin sadece bir kez yapılmasını sağlar.
+  - `saving`: Kayıt devam ederken pencerenin kapanmasını ve ikinci bir kaydın başlamasını engeller.
   - `closeSaveDone`: Kapanışta kaydın iki kez yapılmasını önler.
   - `windowClosed`: Kullanıcı pencereyi PDF inerken kapatırsa, inen PDF'in kapalı pencereye yüklenmesini önler.
 - `Window_Loaded`: `S3BookService.GetBookStreamAsync` ile PDF'i S3'ten belleğe alır ve `PdfViewer.Load(bookStream)` ile gösterir. Hata olursa mesaj verip pencereyi kapatır.
@@ -109,7 +112,9 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
   - `S3Key`: PDF'in S3'teki yolu.
   - `CurrentPage`: Kaydedilen sayfa.
   - `BookmarkTime`: Kaydedilme zamanı.
-- `ToString()`: Listede görünen yazıyı oluşturur, örneğin "The Two Towers - J.R.R. Tolkien (Page 12, Last read: 2026-09-20 18:30)".
+- `ToString()`: Listede görünen yazıyı oluşturur, örneğin "The Two Towers - J.R.R. Tolkien (Page 12, Last read: 2026-09-20 21:30)".
+  - DynamoDB'de zaman UTC olarak saklanır, ama listede bilgisayarın yerel saatiyle gösterilir. Türkiye için UTC+3, bu yüzden 18:30 UTC ekranda 21:30 olarak görünür.
+  - `CultureInfo.InvariantCulture` tarihin bilgisayarın dil ayarından etkilenmemesini sağlar.
 
 ## Services/AwsClientFactory.cs
 

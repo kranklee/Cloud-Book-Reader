@@ -50,7 +50,7 @@ docs/
 | DynamoDB table | `Bookshelf` |
 | DynamoDB index | `UserBookmarkIndex` |
 
-The AWS resource names were created before the application was renamed, so they do not match the application name. They are used as they are.
+The AWS resource names are fixed by the assignment and are used as they are.
 
 ### 1. AWS profile
 
@@ -197,6 +197,7 @@ Only SHA-256 hashes of these passwords are stored in DynamoDB.
 - Credentials are loaded from the local `cloudshelf-lab` profile.
 - Error messages never show credentials.
 - The S3 bucket is private. The PDF is read with `GetObjectAsync` and copied to a `MemoryStream`. It is never saved to Downloads, Temp or any other local file.
+- The PDF viewer's file tools (Open, Save, Save As, Print) are hidden, so the book cannot be saved from the reader window.
 - Passwords are stored as SHA-256 hashes. This is enough for this assignment. A real product would use a salted, slow hash (for example PBKDF2) or a service such as Amazon Cognito.
 - The IAM policy only allows the four actions the application uses.
 
