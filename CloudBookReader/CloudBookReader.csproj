@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>CloudBookReader</RootNamespace>
+    <AssemblyName>CloudBookReader</AssemblyName>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="4.0.105" />
+    <PackageReference Include="AWSSDK.S3" Version="4.0.103.4" />
+    <PackageReference Include="Syncfusion.Licensing" Version="34.2.9" />
+    <PackageReference Include="Syncfusion.PdfViewer.WPF" Version="34.2.9" />
+  </ItemGroup>
+
+</Project>
