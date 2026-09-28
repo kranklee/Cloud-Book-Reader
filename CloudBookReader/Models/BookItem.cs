@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace CloudBookReader.Models
 {
     public class BookItem
@@ -14,9 +16,9 @@ namespace CloudBookReader.Models
         {
             string lastRead = "never";
 
-            if (DateTime.TryParse(BookmarkTime, out DateTime time))
+            if (DateTime.TryParse(BookmarkTime, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime time))
             {
-                lastRead = time.ToString("yyyy-MM-dd HH:mm");
+                lastRead = time.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
             }
 
             return $"{Title} - {Author} (Page {CurrentPage}, Last read: {lastRead})";

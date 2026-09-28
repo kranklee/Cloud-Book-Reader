@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using Amazon.DynamoDBv2;
@@ -90,7 +91,7 @@ namespace CloudBookReader.Services
 
         public async Task SaveBookmarkAsync(BookItem book, int currentPage)
         {
-            string time = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ");
+            string time = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
 
             var request = new UpdateItemRequest
             {
