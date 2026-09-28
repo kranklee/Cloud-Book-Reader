@@ -86,6 +86,7 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
   - `bookStream`: PDF'in bellekteki kopyası. Pencere açık kaldığı sürece silinmemelidir.
   - `documentLoaded`: PDF'in yüklenip yüklenmediğini gösterir.
   - `closeSaveDone`: Kapanışta kaydın iki kez yapılmasını önler.
+  - `windowClosed`: Kullanıcı pencereyi PDF inerken kapatırsa, inen PDF'in kapalı pencereye yüklenmesini önler.
 - `Window_Loaded`: `S3BookService.GetBookStreamAsync` ile PDF'i S3'ten belleğe alır ve `PdfViewer.Load(bookStream)` ile gösterir. Hata olursa mesaj verip pencereyi kapatır.
 - `PdfViewer_DocumentLoaded`: PDF tamamen yüklendiğinde çalışır. Kayıtlı sayfa 1'den büyükse ve PDF'te o sayfa varsa `GotoPage` ile o sayfaya gider. Sayfaya gitme ancak PDF yüklendikten sonra yapılabildiği için bu olayda yapılır.
 - `GetCurrentPage`: `PdfViewer.CurrentPageIndex` ile o an görünen sayfa numarasını alır. Sayfalar 1'den başlar.

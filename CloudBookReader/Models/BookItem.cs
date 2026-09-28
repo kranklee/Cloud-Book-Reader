@@ -14,7 +14,7 @@ namespace CloudBookReader.Models
         {
             string lastRead = "never";
 
-            if (DateTime.TryParse(BookmarkTime, null, System.Globalization.DateTimeStyles.AdjustToUniversal, out DateTime time))
+            if (DateTime.TryParse(BookmarkTime, out DateTime time))
             {
                 lastRead = time.ToString("yyyy-MM-dd HH:mm");
             }

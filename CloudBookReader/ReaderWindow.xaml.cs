@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using CloudBookReader.Models;
 using CloudBookReader.Services;
@@ -13,6 +14,7 @@ namespace CloudBookReader
         private bool documentLoaded;
         private bool firstPageJumpDone;
         private bool closeSaveDone;
+        private bool windowClosed;
 
         public ReaderWindow(BookItem book)
         {
@@ -29,12 +31,26 @@ namespace CloudBookReader
             {
                 StatusText.Text = "Loading book...";
                 S3BookService s3 = new S3BookService();
-                bookStream = await s3.GetBookStreamAsync(book.S3Key);
+                MemoryStream stream = await s3.GetBookStreamAsync(book.S3Key);
+
+                // the user may close the window while the book is downloading
+                if (windowClosed)
+                {
+                    stream.Dispose();
+                    return;
+                }
+
+                bookStream = stream;
                 bookStream.Position = 0;
                 PdfViewer.Load(bookStream);
             }
             catch
             {
+                if (windowClosed)
+                {
+                    return;
+                }
+
                 MessageBox.Show("The book could not be loaded from Amazon S3.", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 Close();
@@ -129,6 +145,8 @@ namespace CloudBookReader
 
         private void Window_Closed(object? sender, EventArgs e)
         {
+            windowClosed = true;
+
             try
             {
                 PdfViewer.Unload();
