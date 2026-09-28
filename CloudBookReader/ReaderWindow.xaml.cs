@@ -15,10 +15,19 @@ namespace CloudBookReader
         private bool firstPageJumpDone;
         private bool closeSaveDone;
         private bool windowClosed;
+        private bool saving;
 
         public ReaderWindow(BookItem book)
         {
             InitializeComponent();
+
+            // hide Open / Save / Print so the book is never saved on this computer
+            if (PdfViewer.ToolbarSettings == null)
+            {
+                PdfViewer.ToolbarSettings = new Syncfusion.Windows.PdfViewer.PdfViewerToolbarSettings();
+            }
+            PdfViewer.ToolbarSettings.ShowFileTools = false;
+
             this.book = book;
             Title = "Cloud Book Reader - " + book.Title;
             BookInfoText.Text = book.Title + " by " + book.Author;
@@ -94,11 +103,12 @@ namespace CloudBookReader
 
         private async void SaveBookmarkButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!documentLoaded)
+            if (!documentLoaded || saving)
             {
                 return;
             }
 
+            saving = true;
             SaveBookmarkButton.IsEnabled = false;
             try
             {
@@ -108,6 +118,10 @@ namespace CloudBookReader
             {
                 MessageBox.Show("The bookmark could not be saved.", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                saving = false;
             }
             SaveBookmarkButton.IsEnabled = true;
         }
@@ -119,6 +133,13 @@ namespace CloudBookReader
 
         private async void Window_Closing(object? sender, CancelEventArgs e)
         {
+            // wait until the current save is finished
+            if (saving)
+            {
+                e.Cancel = true;
+                return;
+            }
+
             if (closeSaveDone || !documentLoaded)
             {
                 return;
@@ -130,6 +151,7 @@ namespace CloudBookReader
             CloseButton.IsEnabled = false;
             StatusText.Text = "Saving bookmark...";
 
+            saving = true;
             try
             {
                 await SaveBookmark();
@@ -138,6 +160,10 @@ namespace CloudBookReader
             {
                 MessageBox.Show("The bookmark could not be saved.", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                saving = false;
             }
 
             Close();
