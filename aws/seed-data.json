@@ -1,0 +1,328 @@
+{
+  "Bookshelf": [
+    {
+      "PutRequest": {
+        "Item": {
+          "UserId": {
+            "S": "student1"
+          },
+          "RecordId": {
+            "S": "USER"
+          },
+          "PasswordHash": {
+            "S": "c4174c017d7b2bf1ccc9790377081379e197f35d41371ae2e86be72d81f0d011"
+          },
+          "DisplayName": {
+            "S": "Student One"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "UserId": {
+            "S": "student1"
+          },
+          "RecordId": {
+            "S": "BOOK#fellowship"
+          },
+          "ShelfUserId": {
+            "S": "student1"
+          },
+          "Title": {
+            "S": "The Fellowship of the Ring"
+          },
+          "Author": {
+            "S": "J.R.R. Tolkien"
+          },
+          "S3Key": {
+            "S": "books/the-fellowship-of-the-ring.pdf"
+          },
+          "CurrentPage": {
+            "N": "40"
+          },
+          "BookmarkTime": {
+            "S": "2026-09-14T19:05:00Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "UserId": {
+            "S": "student1"
+          },
+          "RecordId": {
+            "S": "BOOK#two-towers"
+          },
+          "ShelfUserId": {
+            "S": "student1"
+          },
+          "Title": {
+            "S": "The Two Towers"
+          },
+          "Author": {
+            "S": "J.R.R. Tolkien"
+          },
+          "S3Key": {
+            "S": "books/the-two-towers.pdf"
+          },
+          "CurrentPage": {
+            "N": "12"
+          },
+          "BookmarkTime": {
+            "S": "2026-09-20T18:30:00Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "UserId": {
+            "S": "student1"
+          },
+          "RecordId": {
+            "S": "BOOK#return-of-the-king"
+          },
+          "ShelfUserId": {
+            "S": "student1"
+          },
+          "Title": {
+            "S": "The Return of the King"
+          },
+          "Author": {
+            "S": "J.R.R. Tolkien"
+          },
+          "S3Key": {
+            "S": "books/the-return-of-the-king.pdf"
+          },
+          "CurrentPage": {
+            "N": "1"
+          },
+          "BookmarkTime": {
+            "S": "2026-09-02T08:15:00Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "UserId": {
+            "S": "student2"
+          },
+          "RecordId": {
+            "S": "USER"
+          },
+          "PasswordHash": {
+            "S": "59421a18213bc71c8d232dd20cdefdc579e13aff064467a71095aecc5ba00ffa"
+          },
+          "DisplayName": {
+            "S": "Student Two"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "UserId": {
+            "S": "student2"
+          },
+          "RecordId": {
+            "S": "BOOK#fellowship"
+          },
+          "ShelfUserId": {
+            "S": "student2"
+          },
+          "Title": {
+            "S": "The Fellowship of the Ring"
+          },
+          "Author": {
+            "S": "J.R.R. Tolkien"
+          },
+          "S3Key": {
+            "S": "books/the-fellowship-of-the-ring.pdf"
+          },
+          "CurrentPage": {
+            "N": "3"
+          },
+          "BookmarkTime": {
+            "S": "2026-09-22T21:10:00Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "UserId": {
+            "S": "student2"
+          },
+          "RecordId": {
+            "S": "BOOK#two-towers"
+          },
+          "ShelfUserId": {
+            "S": "student2"
+          },
+          "Title": {
+            "S": "The Two Towers"
+          },
+          "Author": {
+            "S": "J.R.R. Tolkien"
+          },
+          "S3Key": {
+            "S": "books/the-two-towers.pdf"
+          },
+          "CurrentPage": {
+            "N": "27"
+          },
+          "BookmarkTime": {
+            "S": "2026-09-11T16:45:00Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "UserId": {
+            "S": "student2"
+          },
+          "RecordId": {
+            "S": "BOOK#return-of-the-king"
+          },
+          "ShelfUserId": {
+            "S": "student2"
+          },
+          "Title": {
+            "S": "The Return of the King"
+          },
+          "Author": {
+            "S": "J.R.R. Tolkien"
+          },
+          "S3Key": {
+            "S": "books/the-return-of-the-king.pdf"
+          },
+          "CurrentPage": {
+            "N": "15"
+          },
+          "BookmarkTime": {
+            "S": "2026-09-17T12:20:00Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "UserId": {
+            "S": "student3"
+          },
+          "RecordId": {
+            "S": "USER"
+          },
+          "PasswordHash": {
+            "S": "538311f081f8d0221a4de54a1efbce7c1721c288fadbacb347b51689ac11ea35"
+          },
+          "DisplayName": {
+            "S": "Student Three"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "UserId": {
+            "S": "student3"
+          },
+          "RecordId": {
+            "S": "BOOK#fellowship"
+          },
+          "ShelfUserId": {
+            "S": "student3"
+          },
+          "Title": {
+            "S": "The Fellowship of the Ring"
+          },
+          "Author": {
+            "S": "J.R.R. Tolkien"
+          },
+          "S3Key": {
+            "S": "books/the-fellowship-of-the-ring.pdf"
+          },
+          "CurrentPage": {
+            "N": "8"
+          },
+          "BookmarkTime": {
+            "S": "2026-09-05T10:00:00Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "UserId": {
+            "S": "student3"
+          },
+          "RecordId": {
+            "S": "BOOK#two-towers"
+          },
+          "ShelfUserId": {
+            "S": "student3"
+          },
+          "Title": {
+            "S": "The Two Towers"
+          },
+          "Author": {
+            "S": "J.R.R. Tolkien"
+          },
+          "S3Key": {
+            "S": "books/the-two-towers.pdf"
+          },
+          "CurrentPage": {
+            "N": "19"
+          },
+          "BookmarkTime": {
+            "S": "2026-09-09T14:35:00Z"
+          }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "UserId": {
+            "S": "student3"
+          },
+          "RecordId": {
+            "S": "BOOK#return-of-the-king"
+          },
+          "ShelfUserId": {
+            "S": "student3"
+          },
+          "Title": {
+            "S": "The Return of the King"
+          },
+          "Author": {
+            "S": "J.R.R. Tolkien"
+          },
+          "S3Key": {
+            "S": "books/the-return-of-the-king.pdf"
+          },
+          "CurrentPage": {
+            "N": "33"
+          },
+          "BookmarkTime": {
+            "S": "2026-09-25T20:50:00Z"
+          }
+        }
+      }
+    }
+  ]
+}

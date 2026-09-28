@@ -1,0 +1,50 @@
+{
+  "TableName": "Bookshelf",
+  "BillingMode": "PAY_PER_REQUEST",
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "UserId",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "RecordId",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "ShelfUserId",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "BookmarkTime",
+      "AttributeType": "S"
+    }
+  ],
+  "KeySchema": [
+    {
+      "AttributeName": "UserId",
+      "KeyType": "HASH"
+    },
+    {
+      "AttributeName": "RecordId",
+      "KeyType": "RANGE"
+    }
+  ],
+  "GlobalSecondaryIndexes": [
+    {
+      "IndexName": "UserBookmarkIndex",
+      "KeySchema": [
+        {
+          "AttributeName": "ShelfUserId",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "BookmarkTime",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
+    }
+  ]
+}

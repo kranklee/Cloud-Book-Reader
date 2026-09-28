@@ -1,0 +1,37 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadUserAndBookItems",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem"
+      ],
+      "Resource": "arn:aws:dynamodb:eu-central-1:*:table/Bookshelf"
+    },
+    {
+      "Sid": "SaveBookmarks",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:UpdateItem"
+      ],
+      "Resource": "arn:aws:dynamodb:eu-central-1:*:table/Bookshelf"
+    },
+    {
+      "Sid": "QueryBookmarkIndex",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:Query"
+      ],
+      "Resource": "arn:aws:dynamodb:eu-central-1:*:table/Bookshelf/index/UserBookmarkIndex"
+    },
+    {
+      "Sid": "ReadBookFiles",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Resource": "arn:aws:s3:::cloudshelf-cem-comp306-2026/books/*"
+    }
+  ]
+}
