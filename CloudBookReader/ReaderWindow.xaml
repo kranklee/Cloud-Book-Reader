@@ -4,7 +4,7 @@
         xmlns:syncfusion="clr-namespace:Syncfusion.Windows.PdfViewer;assembly=Syncfusion.PdfViewer.WPF"
         Title="Cloud Book Reader" Height="700" Width="900"
         WindowStartupLocation="CenterScreen"
-        FontFamily="Arial" Background="#FFFDF5E6"
+        Style="{StaticResource NormalWindow}"
         Loaded="Window_Loaded" Closing="Window_Closing" Closed="Window_Closed">
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -13,15 +13,14 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-            <TextBlock x:Name="BookInfoText" Text="Book" FontSize="16" FontWeight="Bold"
-                       Foreground="DarkGreen" VerticalAlignment="Center" Margin="0,0,20,0" />
+            <TextBlock x:Name="BookInfoText" Text="Book" Style="{StaticResource TitleText}"
+                       FontSize="16" VerticalAlignment="Center" Margin="0,0,20,0" />
             <TextBlock x:Name="StatusText" Text="Loading book..." FontSize="14"
                        VerticalAlignment="Center" Margin="0,0,20,0" />
-            <Button x:Name="SaveBookmarkButton" Content="Save Bookmark" Width="120" Height="30"
-                    Background="DarkGreen" Foreground="White" Margin="0,0,10,0"
-                    IsEnabled="False" Click="SaveBookmarkButton_Click" />
-            <Button x:Name="CloseButton" Content="Close" Width="80" Height="30"
-                    Background="DarkRed" Foreground="White" Click="CloseButton_Click" />
+            <Button x:Name="SaveBookmarkButton" Content="Save Bookmark" Style="{StaticResource GreenButton}"
+                    Width="120" IsEnabled="False" Click="SaveBookmarkButton_Click" />
+            <Button x:Name="CloseButton" Content="Close" Style="{StaticResource RedButton}"
+                    Width="80" Click="CloseButton_Click" />
         </StackPanel>
 
         <syncfusion:PdfViewerControl x:Name="PdfViewer" Grid.Row="1"

@@ -89,7 +89,7 @@ namespace CloudBookReader.Services
             return books;
         }
 
-        public async Task SaveBookmarkAsync(BookItem book, int currentPage)
+        public async Task SaveBookmarkAsync(BookItem book, int currentPage, int totalPages)
         {
             string time = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
 
@@ -101,10 +101,11 @@ namespace CloudBookReader.Services
                     { "UserId", new AttributeValue { S = book.UserId } },
                     { "RecordId", new AttributeValue { S = book.RecordId } }
                 },
-                UpdateExpression = "SET CurrentPage = :page, BookmarkTime = :time, ShelfUserId = :uid",
+                UpdateExpression = "SET CurrentPage = :page, TotalPages = :total, BookmarkTime = :time, ShelfUserId = :uid",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
-                    { ":page", new AttributeValue { N = currentPage.ToString() } },
+                    { ":page", new AttributeValue { N = currentPage.ToString(CultureInfo.InvariantCulture) } },
+                    { ":total", new AttributeValue { N = totalPages.ToString(CultureInfo.InvariantCulture) } },
                     { ":time", new AttributeValue { S = time } },
                     { ":uid", new AttributeValue { S = book.UserId } }
                 }
@@ -113,6 +114,7 @@ namespace CloudBookReader.Services
             await _client.UpdateItemAsync(request);
 
             book.CurrentPage = currentPage;
+            book.TotalPages = totalPages;
             book.BookmarkTime = time;
         }
 
@@ -131,6 +133,11 @@ namespace CloudBookReader.Services
             if (item.TryGetValue("CurrentPage", out AttributeValue? pageValue) && int.TryParse(pageValue.N, out int page))
             {
                 book.CurrentPage = page;
+            }
+
+            if (item.TryGetValue("TotalPages", out AttributeValue? totalValue) && int.TryParse(totalValue.N, out int total))
+            {
+                book.TotalPages = total;
             }
 
             return book;

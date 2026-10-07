@@ -80,7 +80,7 @@ namespace CloudBookReader
                 }
             }
 
-            StatusText.Text = "Saved page: " + book.CurrentPage;
+            StatusText.Text = "Saved page: " + book.CurrentPage + " of " + PdfViewer.PageCount;
         }
 
         private int GetCurrentPage()
@@ -97,8 +97,9 @@ namespace CloudBookReader
         private async Task SaveBookmark()
         {
             int page = GetCurrentPage();
-            await dynamo.SaveBookmarkAsync(book, page);
-            StatusText.Text = "Bookmark saved on page " + page + ".";
+            int totalPages = PdfViewer.PageCount;
+            await dynamo.SaveBookmarkAsync(book, page, totalPages);
+            StatusText.Text = "Bookmark saved on page " + page + " of " + totalPages + ".";
         }
 
         private async void SaveBookmarkButton_Click(object sender, RoutedEventArgs e)
