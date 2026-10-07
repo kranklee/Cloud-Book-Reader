@@ -1,53 +1,55 @@
 # Five-Minute Video Demonstration Script
 
-## 0:00 - 0:30 Introduction
+Before recording, reset the demo data so the pages match this script (AWS CloudShell, Frankfurt):
 
-"This is Cloud Book Reader, a WPF desktop application built with C# and .NET 8. It reads PDF books from a private Amazon S3 bucket and stores users, books and bookmarks in Amazon DynamoDB."
+```
+aws dynamodb batch-write-item --request-items file://seed-data.json --region eu-central-1
+```
 
-Show the solution in Visual Studio: `CloudBookReader.sln`, the project `CloudBookReader`, the three windows, `Models` and `Services`.
+## 0:00 - 0:20 Introduction
 
-## 0:30 - 1:30 AWS Setup
+"This is Cloud Book Reader, a WPF desktop application that works like the bookshelf on bookshelf.vitalsource.com. Users log in, see the books on their bookshelf, read PDF books stored in Amazon S3 and continue from the page where they stopped. Users, books and bookmarks are stored in Amazon DynamoDB."
 
-1. S3 console: open bucket `cloudshelf-cem-comp306-2026`, show the `books/` folder with three PDF files. Show that Block Public Access is on.
-2. DynamoDB console: open table `Bookshelf`. Show the keys `UserId` and `RecordId`.
-3. Show a `USER` item with `PasswordHash` (no plain password).
-4. Show a `BOOK#...` item with `ShelfUserId`, `CurrentPage`, `TotalPages` and `BookmarkTime`.
-5. Indexes tab: show `UserBookmarkIndex` (`ShelfUserId`, `BookmarkTime`, projection All).
-6. IAM: show the minimal policy attached to the `cloudshelf-lab` user.
+## 0:20 - 1:20 AWS Setup
 
-## 1:30 - 2:15 Code Walkthrough
+1. DynamoDB console: open table `Bookshelf`, created with the AWS Management Console. Show the keys `UserId` and `RecordId`.
+2. Explore table items: show a `USER` item with `PasswordHash` (no plain password).
+3. Show a `BOOK#...` item with `ShelfUserId`, `CurrentPage`, `TotalPages` and `BookmarkTime`. Point out three users with three books each.
+4. Indexes tab: show `UserBookmarkIndex` (`ShelfUserId`, `BookmarkTime`). "This index sorts each user's books by the latest bookmark."
+5. S3 console: open bucket `cloudshelf-cem-comp306-2026`, show the `books/` folder with three PDF files. Show that Block Public Access is on: "The books are private and cannot be downloaded from the internet."
 
-- `AwsClientFactory.cs`: the profile `cloudshelf-lab` and region `eu-central-1`, no keys in the code.
-- `DynamoDbService.cs`: `ValidateUserAsync` hashes the password with SHA-256; `GetBooksAsync` queries `UserBookmarkIndex` with `ScanIndexForward = false`; `SaveBookmarkAsync` updates `CurrentPage`, `TotalPages`, `BookmarkTime` and `ShelfUserId`.
-- `App.xaml`: the basic styles (`NormalWindow`, `GreenButton`, `RedButton`) that work like CSS classes for all windows.
-- `S3BookService.cs`: `GetObjectAsync` and copy to a `MemoryStream`, nothing saved to disk.
+## 1:20 - 1:45 Login
 
-## 2:15 - 2:45 Login
-
-1. Press F5.
+1. Start the application.
 2. Try `student1` with a wrong password: "Invalid user ID or password."
 3. Log in with `student1` / `Reader1!`.
 
-## 2:45 - 3:15 Book List and Search
+## 1:45 - 2:20 Bookshelf
 
-1. Point out the order: newest bookmark first (The Two Towers on top).
+1. Point out the order: the most recently read book is at the top (The Two Towers).
 2. Point out the reading progress: "Page 12 of 60, 20%".
 3. Type `fellowship` in the search box, then `tolkien`, then clear it.
 
-## 3:15 - 4:15 Reading and Bookmark
+## 2:20 - 3:20 Reading and Bookmark
 
 1. Double-click "The Two Towers". The PDF opens on the saved page 12.
-2. Go to page 20 and press Bookmark. Show the message.
-3. Refresh the DynamoDB item in the console: `CurrentPage` = 20, `TotalPages` = 60 and the new `BookmarkTime`.
-4. Go to page 25 and close the reader.
+2. "The PDF is read from S3 into memory. The Open, Save and Print buttons are hidden, so the book cannot be downloaded."
+3. Go to page 20 and press Bookmark. Show the message "Bookmark saved on page 20 of 60."
+4. Switch to the DynamoDB console and refresh the item `BOOK#two-towers`: `CurrentPage` = 20 and a new `BookmarkTime`.
 
-## 4:15 - 4:45 Reload and Reopen
+## 3:20 - 4:00 Saving When the Reader Closes
 
-1. The list updates: "The Two Towers" is at the top and shows "Page 25 of 60, 41%". Press Refresh to show that DynamoDB has the same data.
-2. Open "The Return of the King", go to page 5, close it. It moves to the top of the list.
-3. Press Logout, log in again as `student1` and press Continue Reading: the most recently read book opens exactly on its last page, like the Continue Reading button on bookshelf.vitalsource.com.
+1. Back in the reader, go to page 25 and close the window without pressing Bookmark.
+2. The list updates: "The Two Towers" shows "Page 25 of 60, 41%".
+3. Open "The Return of the King", go to page 5 and close it. It moves to the top of the list.
+
+## 4:00 - 4:45 Continue Reading After Logout
+
+1. Press Logout.
+2. Log in again as `student1`.
+3. "The Return of the King" is at the top. Press Continue Reading: it opens exactly on page 5.
+4. Close it. Log out and log in as `student2` / `Reader2!` to show that another user has a different bookshelf and order.
 
 ## 4:45 - 5:00 Closing
 
-1. Press Logout.
-2. "Users, books and bookmarks are in DynamoDB, the PDF files are in a private S3 bucket and are only read into memory, and the application uses a local AWS profile with a minimal IAM policy. Thank you."
+"Cloud Book Reader stores users, books and bookmarks in DynamoDB, keeps the PDF files in a private S3 bucket and reads them only into memory, sorts the bookshelf by the latest bookmark and saves the reading page with the Bookmark button and when the reader closes. Thank you."
