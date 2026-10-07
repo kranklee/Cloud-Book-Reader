@@ -4,7 +4,7 @@ Before testing: the `cloudshelf-lab` profile is configured, the `Bookshelf` tabl
 
 Expected book order for `student1` after loading the demo data:
 
-1. The Two Towers (page 12)
+1. The Two Towers (page 12 of 60)
 2. The Fellowship of the Ring (page 40)
 3. The Return of the King (page 1)
 
@@ -22,6 +22,7 @@ Expected book order for `student1` after loading the demo data:
 
 - [ ] "Logged in as: student1" is shown.
 - [ ] Three books are shown, newest bookmark first (order above).
+- [ ] Each book shows its progress, for example "Page 12 of 60, 20%" for The Two Towers.
 - [ ] The status line shows "3 book(s) found."
 - [ ] Typing `towers` in the search box shows only "The Two Towers".
 - [ ] Typing `tolkien` shows all three books.
@@ -38,7 +39,8 @@ Expected book order for `student1` after loading the demo data:
 - [ ] The reader opens on the saved page (page 12 for The Two Towers).
 - [ ] Go to another page (for example page 20) and press Save Bookmark.
 - [ ] The status shows "Bookmark saved on page 20."
-- [ ] In the DynamoDB console, the item `student1` / `BOOK#two-towers` has `CurrentPage` = 20 and a new `BookmarkTime`.
+- [ ] The reader status shows "Bookmark saved on page 20 of 60."
+- [ ] In the DynamoDB console, the item `student1` / `BOOK#two-towers` has `CurrentPage` = 20, `TotalPages` = 60 and a new `BookmarkTime`.
 - [ ] Go to page 25 and close the window with the X button or the Close button.
 - [ ] The book list reloads and "The Two Towers" shows page 25 at the top.
 - [ ] Reopen "The Two Towers": it opens on page 25.
@@ -50,4 +52,6 @@ Expected book order for `student1` after loading the demo data:
 - [ ] Login as `student2` / `Reader2!` shows student2's books in a different order.
 - [ ] No PDF file appears in Downloads or `%TEMP%` after reading a book.
 - [ ] Rename the `cloudshelf-lab` profile temporarily: login shows "Could not connect to AWS..." and no key values.
+- [ ] After closing the reader on page 25, the list shows "Page 25 of 60, 41%".
+- [ ] All windows use Arial, the cream background and the green/red buttons from `App.xaml`.
 - [ ] All visible text is English.

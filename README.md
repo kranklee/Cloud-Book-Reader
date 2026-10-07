@@ -16,13 +16,39 @@ Cloud Book Reader is a simple WPF desktop application for reading PDF books stor
 - Amazon S3 (PDF files), Amazon DynamoDB (users, books, bookmarks)
 - Syncfusion PDF Viewer for WPF (`Syncfusion.PdfViewer.WPF`, `Syncfusion.Licensing`)
 
+## Features
+
+- Login with a user ID and password stored in DynamoDB
+- Book list sorted by the latest bookmark (newest first)
+- Search by title or author
+- Open a book with the Open Book button or a double-click
+- Read the PDF from S3 inside the application
+- Continue from the last saved page
+- Save Bookmark button, and automatic save when the reader closes
+- Reading progress: the book list shows "Page 12 of 60, 20%" for every book
+
+## Basic Styles
+
+WPF does not use CSS. The same idea is done with XAML styles. `App.xaml` contains a few simple styles that all windows use, like CSS classes:
+
+| Style | Used for |
+|---|---|
+| `NormalWindow` | Arial font, font size 13, cream background |
+| `TitleText` | Dark green bold headings |
+| `ErrorText` | Dark red messages |
+| `GrayButton` | Normal button size and margin |
+| `GreenButton` | Main actions (Login, Open Book, Save Bookmark) |
+| `RedButton` | Clear, Logout, Close |
+
+A control uses a style with `Style="{StaticResource GreenButton}"`.
+
 ## Project Structure
 
 ```
 CloudBookReader.sln
 CloudBookReader/
   CloudBookReader.csproj
-  App.xaml / App.xaml.cs                 Application start, Syncfusion license
+  App.xaml / App.xaml.cs                 Application start, basic styles, Syncfusion license
   MainWindow.xaml / .cs                  Login window
   BooksWindow.xaml / .cs                 Book list and search
   ReaderWindow.xaml / .cs                PDF reader and bookmark
@@ -88,7 +114,7 @@ One table stores both users and books.
 | Record | UserId | RecordId | Other attributes |
 |---|---|---|---|
 | User | `student1` | `USER` | `PasswordHash` (SHA-256, lowercase hex), `DisplayName` |
-| Book | `student1` | `BOOK#two-towers` | `ShelfUserId`, `Title`, `Author`, `S3Key`, `CurrentPage` (Number), `BookmarkTime` (ISO-8601 UTC) |
+| Book | `student1` | `BOOK#two-towers` | `ShelfUserId`, `Title`, `Author`, `S3Key`, `CurrentPage` (Number), `TotalPages` (Number), `BookmarkTime` (ISO-8601 UTC) |
 
 User records do not have `ShelfUserId`, so they never appear in `UserBookmarkIndex`. Only books appear in the index. `BookmarkTime` is saved as `yyyy-MM-ddTHH:mm:ssZ`, so text order is also time order. The application queries the index with `ScanIndexForward = false` to get the newest bookmark first.
 

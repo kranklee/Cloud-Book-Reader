@@ -23,6 +23,14 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
 ## App.xaml ve App.xaml.cs
 
 - `App.xaml`: Uygulamanın başlangıç noktasıdır. `StartupUri="MainWindow.xaml"` program açılınca ilk hangi pencerenin gösterileceğini belirtir.
+- `Application.Resources` bölümü projenin basit stil dosyasıdır. WPF'te CSS yoktur, onun yerine `Style` kullanılır. Her stilin bir adı (`x:Key`) vardır ve CSS sınıfı gibi çalışır:
+  - `NormalWindow`: Arial yazı tipi, 13 punto, krem arka plan. Bütün pencereler bunu kullanır.
+  - `TitleText`: Koyu yeşil, kalın başlık yazısı.
+  - `ErrorText`: Koyu kırmızı hata mesajı.
+  - `GrayButton`: Normal buton boyutu (100x30) ve boşluğu.
+  - `GreenButton` ve `RedButton`: `BasedOn` ile `GrayButton` stilini alır, sadece rengi değiştirir.
+  - Bir kontrol stili `Style="{StaticResource GreenButton}"` şeklinde kullanır. Böylece aynı renk ve boyut her pencerede tekrar yazılmaz.
+  - Stiller bilerek isimli (`x:Key`) yapıldı. İsimsiz stil bütün butonlara uygulanırdı ve PDF görüntüleyicinin kendi araç çubuğu butonlarını da bozabilirdi.
 - `App.xaml.cs`: `App()` yapıcı metodu (constructor) program başlarken bir kez çalışır.
   - Syncfusion lisans anahtarını `SYNCFUSION_LICENSE_KEY` ortam değişkeninden okur ve `RegisterLicense` ile kaydeder.
   - Anahtar koda yazılmaz, böylece GitHub'a gizli bilgi gitmez.
@@ -111,8 +119,11 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
   - `Title` ve `Author`: Kitabın adı ve yazarı.
   - `S3Key`: PDF'in S3'teki yolu.
   - `CurrentPage`: Kaydedilen sayfa.
+  - `TotalPages`: PDF'in toplam sayfa sayısı. 0 ise henüz bilinmiyor demektir.
   - `BookmarkTime`: Kaydedilme zamanı.
-- `ToString()`: Listede görünen yazıyı oluşturur, örneğin "The Two Towers - J.R.R. Tolkien (Page 12, Last read: 2026-09-20 21:30)".
+- `ToString()`: Listede görünen yazıyı oluşturur, örneğin "The Two Towers - J.R.R. Tolkien (Page 12 of 60, 20%, Last read: 2026-09-20 21:30)".
+  - Okuma ilerlemesi (projeye eklenen kişisel özellik): yüzde `CurrentPage * 100 / TotalPages` ile hesaplanır.
+  - `TotalPages` 0 ise sadece "Page 12" yazar.
   - DynamoDB'de zaman UTC olarak saklanır, ama listede bilgisayarın yerel saatiyle gösterilir. Türkiye için UTC+3, bu yüzden 18:30 UTC ekranda 21:30 olarak görünür.
   - `CultureInfo.InvariantCulture` tarihin bilgisayarın dil ayarından etkilenmemesini sağlar.
 
@@ -135,7 +146,7 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
   - `ScanIndexForward = false` sonuçları `BookmarkTime` alanına göre azalan sırada, yani en yeni en üstte olacak şekilde getirir.
   - Kullanıcı kayıtlarında `ShelfUserId` olmadığı için sonuçlarda sadece kitaplar gelir.
   - `LastEvaluatedKey` sonuçlar birden fazla sayfaya bölünürse devam etmeyi sağlar.
-- `SaveBookmarkAsync`: `UpdateItem` ile `CurrentPage`, `BookmarkTime` (şimdiki UTC zamanı) ve `ShelfUserId` alanlarını günceller. Sonra bellekteki `BookItem` nesnesini de günceller.
+- `SaveBookmarkAsync`: `UpdateItem` ile `CurrentPage`, `TotalPages`, `BookmarkTime` (şimdiki UTC zamanı) ve `ShelfUserId` alanlarını günceller. Toplam sayfa sayısı okuyucu penceresinden (`PdfViewer.PageCount`) gelir. Sonra bellekteki `BookItem` nesnesini de günceller.
 - `ToBookItem` ve `GetString`: DynamoDB'den gelen `AttributeValue` sözlüğünü `BookItem` nesnesine çeviren yardımcı metodlar.
   - `S` metin değerini, `N` sayı değerini tutar.
   - DynamoDB sayıları da metin olarak gönderir, bu yüzden `int.TryParse` kullanılır.
