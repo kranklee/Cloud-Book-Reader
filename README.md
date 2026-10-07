@@ -62,16 +62,9 @@ aws/
   create-table.json                      DynamoDB table and index definition
   seed-data.json                         3 users with 3 books each
   iam-policy.json                        Minimal IAM policy for the application
-docs/
-  TESTING.md                             Manual testing checklist
-  DEMO_SCRIPT.md                         Five-minute video demonstration script
-  TURKCE_ACIKLAMA.md                     Turkish explanation of every file
-  AWS_KURULUM.md                         Step-by-step AWS setup guide (Turkish)
 ```
 
 ## AWS Configuration
-
-A step-by-step AWS setup guide in Turkish, for the AWS console and the CLI, is in [docs/AWS_KURULUM.md](docs/AWS_KURULUM.md).
 
 | Setting | Value |
 |---|---|
@@ -251,10 +244,6 @@ Only SHA-256 hashes of these passwords are stored in DynamoDB.
 - The PDF viewer's file tools (Open, Save, Save As, Print) are hidden, so the book cannot be saved from the reader window.
 - Passwords are stored as SHA-256 hashes. This is enough for this assignment. A real product would use a salted, slow hash (for example PBKDF2) or a service such as Amazon Cognito.
 - The IAM policy only allows the four actions the application uses.
-
-## Testing
-
-See [docs/TESTING.md](docs/TESTING.md) for the manual testing checklist and [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) for the video demonstration script.
 
 ## AWS Cost and Cleanup
 
