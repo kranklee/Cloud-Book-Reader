@@ -65,9 +65,12 @@ docs/
   TESTING.md                             Manual testing checklist
   DEMO_SCRIPT.md                         Five-minute video demonstration script
   TURKCE_ACIKLAMA.md                     Turkish explanation of every file
+  AWS_KURULUM.md                         Step-by-step AWS setup guide (Turkish)
 ```
 
 ## AWS Configuration
+
+A step-by-step AWS setup guide in Turkish, for the AWS console and the CLI, is in [docs/AWS_KURULUM.md](docs/AWS_KURULUM.md).
 
 | Setting | Value |
 |---|---|

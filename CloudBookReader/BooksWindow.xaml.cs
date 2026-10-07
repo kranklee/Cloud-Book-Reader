@@ -46,7 +46,6 @@ namespace CloudBookReader
             }
         }
 
-        // shows the books that match the search text (keeps newest first order)
         private void ShowBooks()
         {
             string search = SearchTextBox.Text.Trim().ToLowerInvariant();
@@ -90,7 +89,6 @@ namespace CloudBookReader
                 MessageBox.Show("Could not open the book.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            // the reader already updated the book, so just sort again (newest bookmark first)
             allBooks = allBooks.OrderByDescending(b => b.BookmarkTime, StringComparer.Ordinal).ToList();
             ShowBooks();
 
@@ -107,7 +105,6 @@ namespace CloudBookReader
 
         private void BooksListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            // only open when the user double-clicked on a book (not empty space)
             if (ItemsControl.ContainerFromElement(BooksListBox, (DependencyObject)e.OriginalSource) is ListBoxItem)
             {
                 OpenSelectedBook();

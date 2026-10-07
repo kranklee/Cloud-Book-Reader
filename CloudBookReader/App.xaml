@@ -4,8 +4,6 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
-        <!-- Basic styles for all windows (like a small CSS file) -->
-
         <Style x:Key="NormalWindow" TargetType="Window">
             <Setter Property="FontFamily" Value="Arial" />
             <Setter Property="FontSize" Value="13" />

@@ -21,7 +21,6 @@ namespace CloudBookReader
         {
             InitializeComponent();
 
-            // hide Open / Save / Print so the book is never saved on this computer
             if (PdfViewer.ToolbarSettings == null)
             {
                 PdfViewer.ToolbarSettings = new Syncfusion.Windows.PdfViewer.PdfViewerToolbarSettings();
@@ -43,7 +42,6 @@ namespace CloudBookReader
                 S3BookService s3 = new S3BookService();
                 MemoryStream stream = await s3.GetBookStreamAsync(book.S3Key);
 
-                // the user may close the window while the book is downloading
                 if (windowClosed)
                 {
                     stream.Dispose();
@@ -86,7 +84,6 @@ namespace CloudBookReader
 
         private int GetCurrentPage()
         {
-            // CurrentPageIndex starts from 1
             int page = PdfViewer.CurrentPageIndex;
             if (page < 1)
             {
@@ -135,7 +132,6 @@ namespace CloudBookReader
 
         private async void Window_Closing(object? sender, CancelEventArgs e)
         {
-            // wait until the current save is finished
             if (saving)
             {
                 e.Cancel = true;
