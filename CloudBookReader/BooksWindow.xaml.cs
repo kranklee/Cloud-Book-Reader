@@ -79,6 +79,11 @@ namespace CloudBookReader
                 return;
             }
 
+            OpenBook(book);
+        }
+
+        private void OpenBook(BookItem book)
+        {
             try
             {
                 ReaderWindow reader = new ReaderWindow(book) { Owner = this };
@@ -96,6 +101,17 @@ namespace CloudBookReader
             {
                 BooksListBox.SelectedIndex = 0;
             }
+        }
+
+        private void ContinueButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (allBooks.Count == 0)
+            {
+                MessageBox.Show("You have no books yet.", "Cloud Book Reader");
+                return;
+            }
+
+            OpenBook(allBooks[0]);
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)

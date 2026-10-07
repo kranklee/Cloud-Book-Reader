@@ -18,8 +18,8 @@
                        MaxWidth="400" TextTrimming="CharacterEllipsis" />
             <TextBlock x:Name="StatusText" Text="Loading book..." FontSize="14"
                        VerticalAlignment="Center" Margin="0,0,20,0" />
-            <Button x:Name="SaveBookmarkButton" Content="Save Bookmark" Style="{StaticResource GreenButton}"
-                    Width="120" IsEnabled="False" Click="SaveBookmarkButton_Click" />
+            <Button x:Name="BookmarkButton" Content="Bookmark" Style="{StaticResource GreenButton}"
+                    IsEnabled="False" Click="BookmarkButton_Click" />
             <Button x:Name="CloseButton" Content="Close" Style="{StaticResource RedButton}"
                     Width="80" Click="CloseButton_Click" />
         </StackPanel>

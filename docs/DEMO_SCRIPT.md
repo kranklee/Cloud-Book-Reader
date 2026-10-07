@@ -37,7 +37,7 @@ Show the solution in Visual Studio: `CloudBookReader.sln`, the project `CloudBoo
 ## 3:15 - 4:15 Reading and Bookmark
 
 1. Double-click "The Two Towers". The PDF opens on the saved page 12.
-2. Go to page 20 and press Save Bookmark. Show the message.
+2. Go to page 20 and press Bookmark. Show the message.
 3. Refresh the DynamoDB item in the console: `CurrentPage` = 20, `TotalPages` = 60 and the new `BookmarkTime`.
 4. Go to page 25 and close the reader.
 
@@ -45,7 +45,7 @@ Show the solution in Visual Studio: `CloudBookReader.sln`, the project `CloudBoo
 
 1. The list updates: "The Two Towers" is at the top and shows "Page 25 of 60, 41%". Press Refresh to show that DynamoDB has the same data.
 2. Open "The Return of the King", go to page 5, close it. It moves to the top of the list.
-3. Reopen "The Two Towers": it opens on page 25.
+3. Press Logout, log in again as `student1` and press Continue Reading: the most recently read book opens exactly on its last page, like the Continue Reading button on bookshelf.vitalsource.com.
 
 ## 4:45 - 5:00 Closing
 

@@ -22,9 +22,10 @@ Cloud Book Reader is a simple WPF desktop application for reading PDF books stor
 - Book list sorted by the latest bookmark (newest first)
 - Search by title or author
 - Open a book with the Open Book button or a double-click
+- Continue Reading button: opens the most recently read book at the last saved page
 - Read the PDF from S3 inside the application
 - Continue from the last saved page
-- Save Bookmark button, and automatic save when the reader closes
+- Bookmark button, and automatic save when the reader closes
 - Reading progress: the book list shows "Page 12 of 60, 20%" for every book
 - The book list is sorted again right after the reader closes, so the book that was just read moves to the top. The Refresh button reloads the list from DynamoDB.
 
@@ -38,7 +39,7 @@ WPF does not use CSS. The same idea is done with XAML styles. `App.xaml` contain
 | `TitleText` | Dark green bold headings |
 | `ErrorText` | Dark red messages |
 | `GrayButton` | Normal button size and margin |
-| `GreenButton` | Main actions (Login, Open Book, Save Bookmark) |
+| `GreenButton` | Main actions (Login, Continue Reading, Open Book, Bookmark) |
 | `RedButton` | Clear, Logout, Close |
 
 A control uses a style with `Style="{StaticResource GreenButton}"`.

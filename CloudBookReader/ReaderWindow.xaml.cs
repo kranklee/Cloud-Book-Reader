@@ -68,7 +68,7 @@ namespace CloudBookReader
         private void PdfViewer_DocumentLoaded(object sender, EventArgs args)
         {
             documentLoaded = true;
-            SaveBookmarkButton.IsEnabled = true;
+            BookmarkButton.IsEnabled = true;
 
             if (!firstPageJumpDone)
             {
@@ -100,7 +100,7 @@ namespace CloudBookReader
             StatusText.Text = "Bookmark saved on page " + page + " of " + totalPages + ".";
         }
 
-        private async void SaveBookmarkButton_Click(object sender, RoutedEventArgs e)
+        private async void BookmarkButton_Click(object sender, RoutedEventArgs e)
         {
             if (!documentLoaded || saving)
             {
@@ -108,7 +108,7 @@ namespace CloudBookReader
             }
 
             saving = true;
-            SaveBookmarkButton.IsEnabled = false;
+            BookmarkButton.IsEnabled = false;
             try
             {
                 await SaveBookmark();
@@ -122,7 +122,7 @@ namespace CloudBookReader
             {
                 saving = false;
             }
-            SaveBookmarkButton.IsEnabled = true;
+            BookmarkButton.IsEnabled = true;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -145,7 +145,7 @@ namespace CloudBookReader
 
             e.Cancel = true;
             closeSaveDone = true;
-            SaveBookmarkButton.IsEnabled = false;
+            BookmarkButton.IsEnabled = false;
             CloseButton.IsEnabled = false;
             StatusText.Text = "Saving bookmark...";
 

@@ -38,9 +38,10 @@ Expected book order for `student1` after loading the demo data:
 
 - [ ] Double-clicking "The Two Towers" opens the reader window.
 - [ ] The Open Book button opens the selected book as well.
+- [ ] Continue Reading opens the book at the top of the list (the most recently read one) without selecting it, on its saved page.
 - [ ] The PDF is displayed inside the window.
 - [ ] The reader opens on the saved page (page 12 for The Two Towers).
-- [ ] Go to another page (for example page 20) and press Save Bookmark.
+- [ ] Go to another page (for example page 20) and press Bookmark.
 - [ ] The reader status shows "Bookmark saved on page 20 of 60."
 - [ ] In the DynamoDB console, the item `student1` / `BOOK#two-towers` has `CurrentPage` = 20, `TotalPages` = 60 and a new `BookmarkTime`.
 - [ ] Go to page 25 and close the window with the X button or the Close button.

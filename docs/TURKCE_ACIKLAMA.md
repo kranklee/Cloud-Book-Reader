@@ -7,9 +7,9 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
 1. Program açılır, `MainWindow` (giriş ekranı) görünür.
 2. Kullanıcı ID ve şifre girer. Şifre SHA-256 ile özetlenir (hash) ve DynamoDB'deki `PasswordHash` ile karşılaştırılır.
 3. Giriş başarılıysa `BooksWindow` açılır. Kitaplar DynamoDB'deki `UserBookmarkIndex` indeksinden, en son okunan kitap en üstte olacak şekilde gelir.
-4. Kullanıcı bir kitabı çift tıklar veya "Open Book" butonuna basar. `ReaderWindow` açılır.
+4. Kullanıcı bir kitabı çift tıklar, "Open Book" butonuna basar ya da "Continue Reading" ile en son okuduğu kitabı açar. `ReaderWindow` açılır.
 5. PDF dosyası S3'ten belleğe (`MemoryStream`) indirilir ve ekranda gösterilir. Diske hiçbir dosya yazılmaz.
-6. Kitap kaydedilmiş sayfadan açılır. "Save Bookmark" butonu ve pencerenin kapanması, o anki sayfayı ve zamanı DynamoDB'ye kaydeder.
+6. Kitap kaydedilmiş sayfadan açılır. "Bookmark" butonu ve pencerenin kapanması, o anki sayfayı ve zamanı DynamoDB'ye kaydeder.
 
 ## CloudBookReader.sln ve CloudBookReader.csproj
 
@@ -64,7 +64,7 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
 - `SearchTextBox`: Arama kutusu. `TextChanged` olayı her harf yazıldığında listeyi filtreler.
 - `ListBox` (`BooksListBox`): Kitapların listesi. Her satırda `BookItem.ToString()` sonucu görünür. `MouseDoubleClick` çift tıklamayı yakalar.
 - `StatusTextBlock`: "3 book(s) found." gibi durum yazısı.
-- Butonlar: "Open Book" (yeşil), "Refresh" (standart gri), "Logout" (kırmızı).
+- Butonlar: "Continue Reading" (yeşil), "Open Book" (yeşil), "Refresh" (standart gri), "Logout" (kırmızı).
 
 ## BooksWindow.xaml.cs
 
@@ -73,11 +73,12 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
 - `Window_Loaded`: Pencere açılınca kitapları yükler.
 - `LoadBooksAsync`: `DynamoDbService.GetBooksAsync` ile kitapları çeker ve `ShowBooks` metodunu çağırır.
 - `ShowBooks`: Arama metnini `ToLowerInvariant()` ile küçük harfe çevirir. Normal `ToLower()` Türkçe Windows'ta büyük "I" harfini "ı" yapardı ve "TOLKIEN" araması sonuç vermezdi. Başlıkta veya yazarda geçen kitapları listeye ekler. Sıra değişmez, yani en yeni yer imi hep en üsttedir.
-- `OpenSelectedBook`:
-  - Seçili kitap yoksa uyarı verir.
-  - Varsa `ReaderWindow` penceresini `ShowDialog()` ile açar. `ShowDialog` okuyucu kapanana kadar bekler.
+- `OpenSelectedBook`: Seçili kitap yoksa uyarı verir, varsa `OpenBook` metodunu çağırır.
+- `OpenBook`:
+  - `ReaderWindow` penceresini `ShowDialog()` ile açar. `ShowDialog` okuyucu kapanana kadar bekler.
   - Okuyucu kapanınca liste bellekteki yeni bilgilerle `BookmarkTime` alanına göre yeniden sıralanır ve en üstteki kitap seçilir.
   - Listeyi hemen DynamoDB'den tekrar okumak yerine bu yapılır, çünkü indeks (GSI) birkaç an geç güncellenebilir ve eski sayfa görünebilirdi. Refresh butonu listeyi yine DynamoDB'den okur.
+- `ContinueButton_Click`: "Continue Reading" butonu. `allBooks` listesinin ilk kitabını, yani en son okunan kitabı seçim yapmadan `OpenBook` ile açar. Arama filtresinden etkilenmez. Hiç kitap yoksa "You have no books yet." mesajı verir. Ödevdeki bookshelf.vitalsource.com örneğindeki Continue Reading butonunun karşılığıdır.
 - `OpenButton_Click` ve `BooksListBox_MouseDoubleClick`: İkisi de `OpenSelectedBook` metodunu çağırır.
   - Çift tıklama sadece bir kitabın üzerine yapılırsa çalışır. Listenin boş yerine çift tıklamak kitap açmaz.
 - `RefreshButton_Click`: Listeyi yeniden yükler.
@@ -86,7 +87,7 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
 ## ReaderWindow.xaml (PDF Okuyucu)
 
 - `xmlns:syncfusion=...`: Syncfusion kütüphanesini XAML'da kullanabilmek için eklenen tanım.
-- Üst satırda (`StackPanel`) şunlar vardır: kitap adı (`BookInfoText`), durum yazısı (`StatusText`), "Save Bookmark" (yeşil) ve "Close" (kırmızı) butonları.
+- Üst satırda (`StackPanel`) şunlar vardır: kitap adı (`BookInfoText`), durum yazısı (`StatusText`), "Bookmark" (yeşil) ve "Close" (kırmızı) butonları. Buton adı ödevdeki gibi "Bookmark".
 - `BookInfoText` en fazla 400 piksel genişliktedir (`MaxWidth`). Uzun bir kitap adı `TextTrimming` ile "..." olarak kesilir, böylece butonlar ekrandan taşmaz. Fare üzerine gelince tam ad görünür (`ToolTip`).
 - `syncfusion:PdfViewerControl` (`PdfViewer`): PDF'i gösteren hazır kontrol. Kendi araç çubuğu vardır: sayfa değiştirme, yakınlaştırma gibi. Dosya araçları (Open, Save, Save As, Print) kodda `ShowFileTools = false` ile gizlenir. Böylece PDF diske kaydedilemez ve başka bir PDF açılamaz.
 - `Loaded`, `Closing` ve `Closed`: Pencere açılırken, kapanmadan hemen önce ve kapandıktan sonra çalışan olaylar.
@@ -106,7 +107,7 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
 - `PdfViewer_DocumentLoaded`: PDF tamamen yüklendiğinde çalışır. Kayıtlı sayfa 1'den büyükse ve PDF'te o sayfa varsa `GotoPage` ile o sayfaya gider. Sayfaya gitme ancak PDF yüklendikten sonra yapılabildiği için bu olayda yapılır.
 - `GetCurrentPage`: `PdfViewer.CurrentPageIndex` ile o an görünen sayfa numarasını alır. Sayfalar 1'den başlar.
 - `SaveBookmark`: `DynamoDbService.SaveBookmarkAsync` ile sayfayı, toplam sayfa sayısını (`PdfViewer.PageCount`) ve zamanı kaydeder.
-- `SaveBookmarkButton_Click`: Butona basınca kayıt yapar.
+- `BookmarkButton_Click`: "Bookmark" butonuna basınca kayıt yapar.
 - `Window_Closing`, pencere kapanırken kayıt yapar:
   1. Önce `e.Cancel = true` ile kapanmayı durdurur.
   2. Kaydı bekler (`await`).
