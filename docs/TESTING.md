@@ -5,12 +5,13 @@ Before testing: the `cloudshelf-lab` profile is configured, the `Bookshelf` tabl
 Expected book order for `student1` after loading the demo data:
 
 1. The Two Towers (page 12 of 60)
-2. The Fellowship of the Ring (page 40)
-3. The Return of the King (page 1)
+2. The Fellowship of the Ring (page 40 of 60)
+3. The Return of the King (page 1 of 60)
 
 ## Login
 
 - [ ] The application starts and the window title is "Cloud Book Reader".
+- [ ] The cursor is already in the User ID box.
 - [ ] Login with empty fields shows "Please enter your user ID and password."
 - [ ] Login with `student1` and a wrong password shows "Invalid user ID or password."
 - [ ] Login with an unknown user ID shows "Invalid user ID or password."
@@ -26,9 +27,11 @@ Expected book order for `student1` after loading the demo data:
 - [ ] The status line shows "3 book(s) found."
 - [ ] Typing `towers` in the search box shows only "The Two Towers".
 - [ ] Typing `tolkien` shows all three books.
+- [ ] Typing `TOLKIEN` in capital letters also shows all three books (also on a Turkish Windows).
 - [ ] Typing `xyz` shows no books and "0 book(s) found."
 - [ ] Clearing the search box shows all three books again.
 - [ ] Open Book with no selection shows "Please select a book first."
+- [ ] Double-clicking the empty area below the books does not open a book.
 - [ ] Refresh reloads the list.
 
 ## Reader
@@ -41,7 +44,7 @@ Expected book order for `student1` after loading the demo data:
 - [ ] The reader status shows "Bookmark saved on page 20 of 60."
 - [ ] In the DynamoDB console, the item `student1` / `BOOK#two-towers` has `CurrentPage` = 20, `TotalPages` = 60 and a new `BookmarkTime`.
 - [ ] Go to page 25 and close the window with the X button or the Close button.
-- [ ] The book list reloads and "The Two Towers" shows page 25 at the top.
+- [ ] The book list updates and "The Two Towers" shows page 25 at the top, selected.
 - [ ] Reopen "The Two Towers": it opens on page 25.
 - [ ] Open "The Return of the King", move to page 5 and close. It moves to the top of the list.
 

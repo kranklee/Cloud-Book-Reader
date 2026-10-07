@@ -37,14 +37,14 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
 
 ## MainWindow.xaml (Giriş Ekranı)
 
-- `Window`: Başlığı "Cloud Book Reader" olan pencere. `FontFamily="Arial"` yazı tipini, `Background` krem rengi arka planı belirler.
+- `Window`: Başlığı "Cloud Book Reader" olan pencere. `Style="{StaticResource NormalWindow}"` ile Arial yazı tipini ve krem arka planı `App.xaml` dosyasından alır.
 - `StackPanel`: İçindeki elemanları alt alta dizer.
 - `Grid`: Satır ve sütunlardan oluşan bir tablo gibidir. Solda `Label` (etiket), sağda giriş kutuları vardır.
 - `TextBox` (`UserIdTextBox`): Kullanıcı ID'sinin yazıldığı kutu.
 - `PasswordBox` (`PasswordInput`): Şifre kutusu. Yazılanlar nokta olarak görünür.
-- `Button` "Login": Yeşil giriş butonu. `IsDefault="True"` sayesinde Enter tuşu da bu butona basar. `Click="LoginButton_Click"` tıklanınca çalışacak metodu gösterir.
-- `Button` "Clear": Kırmızı temizleme butonu.
-- `TextBlock` (`MessageTextBlock`): Hata mesajlarının koyu kırmızı renkle gösterildiği yazı alanı.
+- `Button` "Login": Yeşil giriş butonu (`GreenButton` stili). `IsDefault="True"` sayesinde Enter tuşu da bu butona basar. `Click="LoginButton_Click"` tıklanınca çalışacak metodu gösterir.
+- `Button` "Clear": Kırmızı temizleme butonu (`RedButton` stili).
+- `TextBlock` (`MessageTextBlock`): Hata mesajlarının koyu kırmızı renkle gösterildiği yazı alanı (`ErrorText` stili).
 
 ## MainWindow.xaml.cs
 
@@ -56,6 +56,7 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
   - Doğruysa `BooksWindow` açılır ve giriş penceresi kapanır.
   - `try/catch` bağlantı hatalarını yakalar ve basit bir İngilizce mesaj gösterir. Hata detayı gösterilmez, böylece gizli bilgi ekrana çıkmaz.
 - `ClearButton_Click`: Kutuları ve mesajı temizler.
+- Program açılınca imleç doğrudan `UserIdTextBox` kutusuna gelir, kullanıcı tıklamadan yazmaya başlayabilir.
 
 ## BooksWindow.xaml (Kitap Listesi)
 
@@ -71,12 +72,14 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
 - `allBooks`: DynamoDB'den gelen tüm kitapların listesi. Arama bu liste üzerinde yapılır, böylece her harfte AWS'ye tekrar istek gönderilmez.
 - `Window_Loaded`: Pencere açılınca kitapları yükler.
 - `LoadBooksAsync`: `DynamoDbService.GetBooksAsync` ile kitapları çeker ve `ShowBooks` metodunu çağırır.
-- `ShowBooks`: Arama metnini küçük harfe çevirir. Başlıkta veya yazarda geçen kitapları listeye ekler. Sıra değişmez, yani en yeni yer imi hep en üsttedir.
+- `ShowBooks`: Arama metnini `ToLowerInvariant()` ile küçük harfe çevirir. Normal `ToLower()` Türkçe Windows'ta büyük "I" harfini "ı" yapardı ve "TOLKIEN" araması sonuç vermezdi. Başlıkta veya yazarda geçen kitapları listeye ekler. Sıra değişmez, yani en yeni yer imi hep en üsttedir.
 - `OpenSelectedBook`:
   - Seçili kitap yoksa uyarı verir.
   - Varsa `ReaderWindow` penceresini `ShowDialog()` ile açar. `ShowDialog` okuyucu kapanana kadar bekler.
-  - Okuyucu kapanınca liste yeniden yüklenir, böylece yeni sayfa ve sıralama görünür.
+  - Okuyucu kapanınca liste bellekteki yeni bilgilerle `BookmarkTime` alanına göre yeniden sıralanır ve en üstteki kitap seçilir.
+  - Listeyi hemen DynamoDB'den tekrar okumak yerine bu yapılır, çünkü indeks (GSI) birkaç an geç güncellenebilir ve eski sayfa görünebilirdi. Refresh butonu listeyi yine DynamoDB'den okur.
 - `OpenButton_Click` ve `BooksListBox_MouseDoubleClick`: İkisi de `OpenSelectedBook` metodunu çağırır.
+  - Çift tıklama sadece bir kitabın üzerine yapılırsa çalışır. Listenin boş yerine çift tıklamak kitap açmaz.
 - `RefreshButton_Click`: Listeyi yeniden yükler.
 - `LogoutButton_Click`: Giriş penceresini tekrar açar ve bu pencereyi kapatır.
 
@@ -84,6 +87,7 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
 
 - `xmlns:syncfusion=...`: Syncfusion kütüphanesini XAML'da kullanabilmek için eklenen tanım.
 - Üst satırda (`StackPanel`) şunlar vardır: kitap adı (`BookInfoText`), durum yazısı (`StatusText`), "Save Bookmark" (yeşil) ve "Close" (kırmızı) butonları.
+- `BookInfoText` en fazla 400 piksel genişliktedir (`MaxWidth`). Uzun bir kitap adı `TextTrimming` ile "..." olarak kesilir, böylece butonlar ekrandan taşmaz. Fare üzerine gelince tam ad görünür (`ToolTip`).
 - `syncfusion:PdfViewerControl` (`PdfViewer`): PDF'i gösteren hazır kontrol. Kendi araç çubuğu vardır: sayfa değiştirme, yakınlaştırma gibi. Dosya araçları (Open, Save, Save As, Print) kodda `ShowFileTools = false` ile gizlenir. Böylece PDF diske kaydedilemez ve başka bir PDF açılamaz.
 - `Loaded`, `Closing` ve `Closed`: Pencere açılırken, kapanmadan hemen önce ve kapandıktan sonra çalışan olaylar.
 
@@ -101,7 +105,7 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
 - `Window_Loaded`: `S3BookService.GetBookStreamAsync` ile PDF'i S3'ten belleğe alır ve `PdfViewer.Load(bookStream)` ile gösterir. Hata olursa mesaj verip pencereyi kapatır.
 - `PdfViewer_DocumentLoaded`: PDF tamamen yüklendiğinde çalışır. Kayıtlı sayfa 1'den büyükse ve PDF'te o sayfa varsa `GotoPage` ile o sayfaya gider. Sayfaya gitme ancak PDF yüklendikten sonra yapılabildiği için bu olayda yapılır.
 - `GetCurrentPage`: `PdfViewer.CurrentPageIndex` ile o an görünen sayfa numarasını alır. Sayfalar 1'den başlar.
-- `SaveBookmark`: `DynamoDbService.SaveBookmarkAsync` ile sayfayı ve zamanı kaydeder.
+- `SaveBookmark`: `DynamoDbService.SaveBookmarkAsync` ile sayfayı, toplam sayfa sayısını (`PdfViewer.PageCount`) ve zamanı kaydeder.
 - `SaveBookmarkButton_Click`: Butona basınca kayıt yapar.
 - `Window_Closing`, pencere kapanırken kayıt yapar:
   1. Önce `e.Cancel = true` ile kapanmayı durdurur.
@@ -147,7 +151,7 @@ Bu belge, projedeki her C# ve XAML dosyasının ne işe yaradığını basit bir
   - Kullanıcı kayıtlarında `ShelfUserId` olmadığı için sonuçlarda sadece kitaplar gelir.
   - `LastEvaluatedKey` sonuçlar birden fazla sayfaya bölünürse devam etmeyi sağlar.
 - `SaveBookmarkAsync`: `UpdateItem` ile `CurrentPage`, `TotalPages`, `BookmarkTime` (şimdiki UTC zamanı) ve `ShelfUserId` alanlarını günceller. Toplam sayfa sayısı okuyucu penceresinden (`PdfViewer.PageCount`) gelir. Sonra bellekteki `BookItem` nesnesini de günceller.
-- `ToBookItem` ve `GetString`: DynamoDB'den gelen `AttributeValue` sözlüğünü `BookItem` nesnesine çeviren yardımcı metodlar.
+- `ToBookItem` ve `GetString`: DynamoDB'den gelen `AttributeValue` sözlüğünü `BookItem` nesnesine çeviren yardımcı metotlar.
   - `S` metin değerini, `N` sayı değerini tutar.
   - DynamoDB sayıları da metin olarak gönderir, bu yüzden `int.TryParse` kullanılır.
 

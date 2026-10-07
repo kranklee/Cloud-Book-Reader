@@ -14,7 +14,8 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
             <TextBlock x:Name="BookInfoText" Text="Book" Style="{StaticResource TitleText}"
-                       FontSize="16" VerticalAlignment="Center" Margin="0,0,20,0" />
+                       FontSize="16" VerticalAlignment="Center" Margin="0,0,20,0"
+                       MaxWidth="400" TextTrimming="CharacterEllipsis" />
             <TextBlock x:Name="StatusText" Text="Loading book..." FontSize="14"
                        VerticalAlignment="Center" Margin="0,0,20,0" />
             <Button x:Name="SaveBookmarkButton" Content="Save Bookmark" Style="{StaticResource GreenButton}"

@@ -43,7 +43,7 @@ Show the solution in Visual Studio: `CloudBookReader.sln`, the project `CloudBoo
 
 ## 4:15 - 4:45 Reload and Reopen
 
-1. The list reloads: "The Two Towers" shows "Page 25 of 60, 41%".
+1. The list updates: "The Two Towers" is at the top and shows "Page 25 of 60, 41%". Press Refresh to show that DynamoDB has the same data.
 2. Open "The Return of the King", go to page 5, close it. It moves to the top of the list.
 3. Reopen "The Two Towers": it opens on page 25.
 

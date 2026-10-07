@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,13 +49,13 @@ namespace CloudBookReader
         // shows the books that match the search text (keeps newest first order)
         private void ShowBooks()
         {
-            string search = SearchTextBox.Text.Trim().ToLower();
+            string search = SearchTextBox.Text.Trim().ToLowerInvariant();
             BooksListBox.Items.Clear();
 
             foreach (BookItem book in allBooks)
             {
-                string title = (book.Title ?? "").ToLower();
-                string author = (book.Author ?? "").ToLower();
+                string title = (book.Title ?? "").ToLowerInvariant();
+                string author = (book.Author ?? "").ToLowerInvariant();
 
                 if (search == "" || title.Contains(search) || author.Contains(search))
                 {
@@ -70,7 +71,7 @@ namespace CloudBookReader
             ShowBooks();
         }
 
-        private async void OpenSelectedBook()
+        private void OpenSelectedBook()
         {
             BookItem? book = BooksListBox.SelectedItem as BookItem;
             if (book == null)
@@ -89,7 +90,14 @@ namespace CloudBookReader
                 MessageBox.Show("Could not open the book.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            await LoadBooksAsync();
+            // the reader already updated the book, so just sort again (newest bookmark first)
+            allBooks = allBooks.OrderByDescending(b => b.BookmarkTime, StringComparer.Ordinal).ToList();
+            ShowBooks();
+
+            if (BooksListBox.Items.Count > 0)
+            {
+                BooksListBox.SelectedIndex = 0;
+            }
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -99,7 +107,8 @@ namespace CloudBookReader
 
         private void BooksListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (BooksListBox.SelectedItem != null)
+            // only open when the user double-clicked on a book (not empty space)
+            if (ItemsControl.ContainerFromElement(BooksListBox, (DependencyObject)e.OriginalSource) is ListBoxItem)
             {
                 OpenSelectedBook();
             }

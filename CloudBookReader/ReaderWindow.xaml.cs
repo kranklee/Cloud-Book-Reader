@@ -31,6 +31,7 @@ namespace CloudBookReader
             this.book = book;
             Title = "Cloud Book Reader - " + book.Title;
             BookInfoText.Text = book.Title + " by " + book.Author;
+            BookInfoText.ToolTip = BookInfoText.Text;
             StatusText.Text = "Saved page: " + book.CurrentPage;
         }
 

@@ -26,6 +26,7 @@ Cloud Book Reader is a simple WPF desktop application for reading PDF books stor
 - Continue from the last saved page
 - Save Bookmark button, and automatic save when the reader closes
 - Reading progress: the book list shows "Page 12 of 60, 20%" for every book
+- The book list is sorted again right after the reader closes, so the book that was just read moves to the top. The Refresh button reloads the list from DynamoDB.
 
 ## Basic Styles
 
@@ -78,6 +79,17 @@ docs/
 
 The AWS resource names are fixed by the assignment and are used as they are.
 
+Two AWS profiles are used:
+
+| Profile | Used by | Permissions |
+|---|---|---|
+| `cloudshelf-lab` | The application | Only the four actions in `aws/iam-policy.json` |
+| `admin` (any administrator profile) | The setup and cleanup commands below | Create tables, buckets and upload files |
+
+The setup commands do not work with `cloudshelf-lab`, because that profile can only read and save bookmarks. Create the administrator profile with `aws configure --profile admin`, or replace `admin` in the commands with the name of your own administrator profile.
+
+Run all commands in Command Prompt or PowerShell from the repository folder (the folder that contains `CloudBookReader.sln`), because they use the relative path `file://aws/...`.
+
 ### 1. AWS profile
 
 The application never contains access keys. It reads credentials from the local profile `cloudshelf-lab`:
@@ -86,7 +98,7 @@ The application never contains access keys. It reads credentials from the local 
 aws configure --profile cloudshelf-lab
 ```
 
-This writes to `%USERPROFILE%\.aws\credentials` on Windows. Never commit that file.
+Enter the access key of the IAM user that has the minimal policy, and enter `eu-central-1` as the default region. This writes to `%USERPROFILE%\.aws\credentials` on Windows. Never commit that file.
 
 ### 2. DynamoDB table and index
 
@@ -98,11 +110,11 @@ This writes to `%USERPROFILE%\.aws\credentials` on Windows. Never commit that fi
 | GSI `UserBookmarkIndex` sort key | `BookmarkTime` | String |
 | GSI projection | ALL | |
 
-Skip this step if the table already exists. To create it (use an administrator profile, not the application profile):
+Skip this step if the table already exists. To create it:
 
 ```
-aws dynamodb create-table --cli-input-json file://aws/create-table.json --region eu-central-1
-aws dynamodb wait table-exists --table-name Bookshelf --region eu-central-1
+aws dynamodb create-table --cli-input-json file://aws/create-table.json --profile admin --region eu-central-1
+aws dynamodb wait table-exists --table-name Bookshelf --profile admin --region eu-central-1
 ```
 
 Console alternative: DynamoDB → Create table → name `Bookshelf`, partition key `UserId` (String), sort key `RecordId` (String), capacity mode On-demand. Then Indexes → Create index → partition key `ShelfUserId` (String), sort key `BookmarkTime` (String), name `UserBookmarkIndex`, projection All.
@@ -123,10 +135,18 @@ User records do not have `ShelfUserId`, so they never appear in `UserBookmarkInd
 `aws/seed-data.json` contains 3 users with 3 books each (12 items). Loading it again overwrites these items and resets the bookmarks.
 
 ```
-aws dynamodb batch-write-item --request-items file://aws/seed-data.json --region eu-central-1
+aws dynamodb batch-write-item --request-items file://aws/seed-data.json --profile admin --region eu-central-1
 ```
 
+The output should be `{"UnprocessedItems": {}}`. If it lists items, run the same command again.
+
 ### 5. Upload the PDF files
+
+If the bucket does not exist yet, create it in Frankfurt. New buckets have Block Public Access on by default:
+
+```
+aws s3 mb s3://cloudshelf-cem-comp306-2026 --profile admin --region eu-central-1
+```
 
 The bucket must stay private (Block Public Access on). PDF files are not included in this repository. Upload legally owned PDFs or your own demonstration PDFs with these exact keys:
 
@@ -137,12 +157,13 @@ books/the-return-of-the-king.pdf
 ```
 
 ```
-aws s3 cp the-fellowship-of-the-ring.pdf s3://cloudshelf-cem-comp306-2026/books/the-fellowship-of-the-ring.pdf
-aws s3 cp the-two-towers.pdf s3://cloudshelf-cem-comp306-2026/books/the-two-towers.pdf
-aws s3 cp the-return-of-the-king.pdf s3://cloudshelf-cem-comp306-2026/books/the-return-of-the-king.pdf
+aws s3 cp the-fellowship-of-the-ring.pdf s3://cloudshelf-cem-comp306-2026/books/the-fellowship-of-the-ring.pdf --profile admin --region eu-central-1
+aws s3 cp the-two-towers.pdf s3://cloudshelf-cem-comp306-2026/books/the-two-towers.pdf --profile admin --region eu-central-1
+aws s3 cp the-return-of-the-king.pdf s3://cloudshelf-cem-comp306-2026/books/the-return-of-the-king.pdf --profile admin --region eu-central-1
+aws s3 ls s3://cloudshelf-cem-comp306-2026/books/ --profile admin --region eu-central-1
 ```
 
-Each demo PDF should have at least 40 pages, because the demo data contains saved pages up to page 40. If a saved page is larger than the PDF page count, the reader opens page 1.
+Each demo PDF should have 60 pages, because the demo data uses `TotalPages` = 60 and saved pages up to page 40. After the first bookmark is saved, `TotalPages` is updated to the real page count of the PDF. If a saved page is larger than the PDF page count, the reader opens page 1.
 
 ### 6. Minimal IAM policy
 
@@ -241,9 +262,9 @@ The application only uses S3 and DynamoDB. No EC2, RDS or other paid services ar
 After the project is graded, clean up:
 
 ```
-aws s3 rm s3://cloudshelf-cem-comp306-2026/books/ --recursive
-aws s3 rb s3://cloudshelf-cem-comp306-2026
-aws dynamodb delete-table --table-name Bookshelf --region eu-central-1
+aws s3 rm s3://cloudshelf-cem-comp306-2026/books/ --recursive --profile admin --region eu-central-1
+aws s3 rb s3://cloudshelf-cem-comp306-2026 --profile admin --region eu-central-1
+aws dynamodb delete-table --table-name Bookshelf --profile admin --region eu-central-1
 ```
 
 Then delete the access key of the `cloudshelf-lab` IAM user (or the whole user) in IAM, and remove the `[cloudshelf-lab]` section from your local `.aws/credentials` file.
